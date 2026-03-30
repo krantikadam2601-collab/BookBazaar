@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background:linear-gradient(135deg, #f4e7d3, #d6bfa7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#logoname{
+    font-family: cursive;
+}
+.brand {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    background-color: white;
+}
+
+.brand h1 {
+    margin: 12px 0 5px;
+    font-size: 34px;
+    color: #4b2e1e;
+}
+
+.tagline {
+    margin: 0;
+    color: #6b4f3a;
+    font-size: 15px;
+    font-style:italic ;
+}
+
+.signup-container {
+    width: 340px;
+    background: white;
+    padding: 35px 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.signup-container h2 {
+    margin-bottom: 25px;
+    color: #4b2e1e;
+}
+
+.signup-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.signup-container input:focus {
+    outline: none;
+    border-color: #8b5e3c;
+    box-shadow: 0 0 6px rgba(139, 94, 60, 0.3);
+}
+
+.signup-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #8b5e3c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.signup-container button:hover {
+    background-color: #6f472c;
+}
+
+.signup-container p {
+    margin-top: 18px;
+    font-size: 14px;
+}
+
+.signup-container a {
+    color: #8b5e3c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-container a:hover {
+    text-decoration: underline;
+}
