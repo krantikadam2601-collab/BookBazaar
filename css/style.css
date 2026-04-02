@@ -9,9 +9,13 @@ body {
     min-height: 100vh;
 }
 
-#logoname{
+#logoname {
     font-family: cursive;
+    font-size: 40px;
+    color: #4b2e1e;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.12);
 }
+
 .brand {
     text-align: center;
     margin-top: 40px;
@@ -19,8 +23,8 @@ body {
 }
 
 .logo {
-    width: 120px;
-    height: 120px;
+    width: 95px;
+    height: 95px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
@@ -52,14 +56,14 @@ body {
 
 .signup-container h2, .login-container h2 {
     margin-bottom: 25px;
-    color: #4b2e1e;
+    color: #000000;
 }
 
 .signup-container input, .login-container input {
     width: 100%;
     padding: 12px;
     margin-bottom: 18px;
-    border: 1px solid #ccc;
+    border: 1px solid #d8c3ae;
     border-radius: 10px;
     font-size: 14px;
     box-sizing: border-box;
@@ -74,17 +78,25 @@ body {
 .signup-container button, .login-container button {
     width: 100%;
     padding: 12px;
-    background-color: #8b5e3c;
+    background-color: #ff7a1a;
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 15px;
     cursor: pointer;
     transition: 0.3s;
+    margin-top: 15px;
 }
 
-.signup-container button:hover, .login-container button:hover {
-    background-color: #6f472c;
+button {
+    transition: all 0.3s ease;
+}
+
+
+button:hover {
+    background-color: #e76800;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
 }
 
 .signup-container p, .login-container p {
@@ -108,4 +120,24 @@ body {
     border-radius: 20px;
     box-shadow: 0 10px 28px rgba(0,0,0,0.15);
     text-align: center;
+}
+.role-container {
+    width: 340px;
+    background: rgba(255,255,255,0.96);
+    padding: 35px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.role-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: #ff7a1a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
 }
