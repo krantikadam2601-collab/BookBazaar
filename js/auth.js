@@ -13,3 +13,16 @@ function signUp() {
             alert(error.message);
         });
 }
+function login() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+            alert("Login Successful!");
+            window.location.href = "roleSelection.html";
+        })
+        .catch((error) => {
+            alert(error.message);
+        });
+}
