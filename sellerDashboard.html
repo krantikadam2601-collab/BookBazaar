@@ -115,6 +115,10 @@
                             <textarea id="otherInfo" name="otherInfo" placeholder="Enter any additional details about the book (condition, edition, etc.)"></textarea>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="contact">Contact Details</label>
+                        <input type="text" id="contact" name="contact" placeholder="Phone or Email" required>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -126,6 +130,19 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- Firebase core -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<!-- Firebase Auth (for logout etc) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<!-- Firestore (THIS is the main one you missed) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<!-- Your config -->
+<script src="js/firebaseConfig.js"></script>
+
+<!-- Your seller logic -->
+<script src="js/script.js"></script>
 </body>
 </html>
