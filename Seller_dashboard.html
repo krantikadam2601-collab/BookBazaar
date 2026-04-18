@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - BookBazaar</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo">
+                    <div class="logo-text">📚</div>
+                </div>
+                <h1>BookBazaar</h1>
+            </div>
+            <p class="subtitle">Seller Dashboard</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="user-info">
+                <div class="user-info-content">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Seller Name</span>
+                        <span class="user-info-value" id="sellerName">Welcome, Seller</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Member Since</span>
+                        <span class="user-info-value">April 2026</span>
+                    </div>
+                </div>
+                <button class="logout-btn">Logout</button>
+            </div>
+
+            <h2 class="dashboard-title">Add New Book Listing</h2>
+
+            <form id="bookListingForm">
+                <!-- Seller Information Section -->
+                <div class="form-section">
+                    <div class="section-title">Seller Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="seller">Seller Name</label>
+                            <input type="text" id="seller" name="seller" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" placeholder="City, State" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Information Section -->
+                <div class="form-section">
+                    <div class="section-title">Book Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bookName">Book Name</label>
+                            <input type="text" id="bookName" name="bookName" placeholder="Enter book title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input type="text" id="author" name="author" placeholder="Enter author name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="">Select a category</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="non-fiction">Non-Fiction</option>
+                                <option value="mystery">Mystery & Thriller</option>
+                                <option value="romance">Romance</option>
+                                <option value="sci-fi">Science Fiction</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="history">History</option>
+                                <option value="biography">Biography</option>
+                                <option value="self-help">Self-Help</option>
+                                <option value="educational">Educational</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="language">Language</label>
+                            <input type="text" id="language" name="language" placeholder="e.g., English, Hindi" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" id="price" name="price" placeholder="Enter price" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pageNo">Total Pages</label>
+                            <input type="number" id="pageNo" name="pageNo" placeholder="Enter number of pages" min="1" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Details Section -->
+                <div class="form-section">
+                    <div class="section-title">Book Details</div>
+                    
+                    <div class="form-row full">
+                        <div class="form-group file-upload-group">
+                            <label for="picture">Book Cover Picture</label>
+                            <label for="picture" class="file-input-label">Choose File</label>
+                            <input type="file" id="picture" name="picture" accept="image/*" required>
+                            <div class="file-name" id="fileName">No file selected</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label for="otherInfo">Additional Information</label>
+                            <textarea id="otherInfo" name="otherInfo" placeholder="Enter any additional details about the book (condition, edition, etc.)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn-save">Save Listing</button>
+                    <button type="reset" class="btn-clear">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
