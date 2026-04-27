@@ -33,6 +33,23 @@
 
             <div id="shopSection">
                 <h2 class="dashboard-title">Available Books</h2>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <input type="text" id="searchInput" placeholder="Search by book name or author..." style="flex: 2; padding: 10px; border: 2px solid #ffe0cc; border-radius: 8px;">
+        <select id="categoryFilter" style="flex: 1; padding: 10px; border: 2px solid #ffe0cc; border-radius: 8px;">
+            <option value="all">All Categories</option>
+            <option value="fiction">Fiction</option>
+            <option value="non-fiction">Non-Fiction</option>
+            <option value="mystery">Mystery & Thriller</option>
+            <option value="romance">Romance</option>
+            <option value="sci-fi">Science Fiction</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="history">History</option>
+            <option value="biography">Biography</option>
+            <option value="self-help">Self-Help</option>
+            <option value="educational">Educational</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
                 <div id="availableBooksGrid" class="books-grid">
                     </div>
             </div>
