@@ -1,3 +1,5 @@
+console.log("🚀 BUYERDASH SCRIPT LOADED!"); // This should appear immediately
+
 document.addEventListener("DOMContentLoaded", () => {
     const auth = firebase.auth();
     let currentUserUID = null;
@@ -11,34 +13,43 @@ document.addEventListener("DOMContentLoaded", () => {
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUserUID = user.uid;
+            document.getElementById("buyerEmail").textContent = user.email;
             loadAvailableBooks();
         } else {
             window.location.href = "login.html";
         }
     });
 
+    // ================= NAVIGATION =================
+    document.getElementById("btnBrowse").addEventListener("click", () => {
+        document.getElementById("shopSection").style.display = "block";
+        document.getElementById("wishlistSection").style.display = "none";
+    });
+
+    document.getElementById("btnWishlist").addEventListener("click", () => {
+        document.getElementById("shopSection").style.display = "none";
+        document.getElementById("wishlistSection").style.display = "block";
+    });
+
     // ================= LOAD BOOKS =================
     function loadAvailableBooks() {
-        console.log("Fetching books from Firestore...");
         db.collection("books").get().then((querySnapshot) => {
             allBooks = [];
+            availableBooksGrid.innerHTML = ""; 
             
             querySnapshot.forEach((doc) => {
                 const book = doc.data();
                 book.id = doc.id;
                 allBooks.push(book);
             });
-
-            console.log("Total books loaded:", allBooks.length);
             renderBooks(allBooks);
-        }).catch(err => console.error("Database Error:", err));
+        });
     }
 
     function renderBooks(booksToDisplay) {
         availableBooksGrid.innerHTML = ""; 
-
         if (booksToDisplay.length === 0) {
-            availableBooksGrid.innerHTML = "<p>No matching books found.</p>";
+            availableBooksGrid.innerHTML = "<p>No books found.</p>";
             return;
         }
 
@@ -51,26 +62,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="book-details">
                     <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
                     <p><strong>Category:</strong> ${book.category || "General"}</p>
-                    <p><strong>Price:</strong> ₹${book.price || "0"}</p>
+                    <p><strong>Location:</strong> ${book.location || "Pune"}</p>
                 </div>
+                <div class="book-price">₹${book.price}</div>
                 <button class="btn-save btn-wishlist" data-id="${book.id}">Add to Wishlist ❤️</button>
             `;
             availableBooksGrid.appendChild(card);
         });
     }
 
-    // ================= SEARCH LOGIC (With Safety) =================
+    // ================= SEARCH & FILTER =================
     function filterBooks() {
+        console.log("🔍 Filtering logic triggered!"); // If this doesn't show, the event listener failed
         const searchTerm = searchInput.value.toLowerCase();
-        const selectedCategory = categoryFilter.value;
-
-        console.log(`Filtering for: "${searchTerm}" in category: ${selectedCategory}`);
+        const selectedCategory = categoryFilter.value.toLowerCase();
 
         const filtered = allBooks.filter(book => {
-            // Safety Check: Make sure bookName and author exist before calling toLowerCase()
             const name = (book.bookName || "").toLowerCase();
             const author = (book.author || "").toLowerCase();
-            const category = book.category || "other";
+            const category = (book.category || "").toLowerCase();
 
             const matchesSearch = name.includes(searchTerm) || author.includes(searchTerm);
             const matchesCategory = (selectedCategory === "all") || (category === selectedCategory);
@@ -82,6 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Attach listeners
-    if (searchInput) searchInput.addEventListener("input", filterBooks);
-    if (categoryFilter) categoryFilter.addEventListener("change", filterBooks);
+    searchInput.addEventListener("input", filterBooks);
+    categoryFilter.addEventListener("change", filterBooks);
 });
