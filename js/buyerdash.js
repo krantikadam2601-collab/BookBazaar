@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             author: bookData.author,
             price: bookData.price,
             category: bookData.category,
-            image: bookData.image || "", // 🔥 ADD THIS LINE
+            image: bookData.image || "", 
             addedAt: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
             alert(`"${bookData.bookName}" added to your Wishlist!`);
