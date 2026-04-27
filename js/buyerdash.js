@@ -92,12 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
             author: bookData.author,
             price: bookData.price,
             category: bookData.category,
+            image: bookData.image || "", // 🔥 ADD THIS LINE
             addedAt: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
             alert(`"${bookData.bookName}" added to your Wishlist!`);
-        }).catch((error) => {
-            console.error("Error adding to wishlist: ", error);
-            alert("Failed to add to wishlist.");
         });
     }
 
