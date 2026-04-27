@@ -1,4 +1,4 @@
-console.log("🚀 BUYERDASH SCRIPT LOADED!"); // This should appear immediately
+console.log("🚀 BUYERDASH SCRIPT LOADED!");
 
 document.addEventListener("DOMContentLoaded", () => {
     const auth = firebase.auth();
@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const availableBooksGrid = document.getElementById("availableBooksGrid");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
+    const wishlistGrid = document.getElementById("wishlistGrid");
 
     // ================= AUTH CHECK =================
     auth.onAuthStateChanged(user => {
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currentUserUID = user.uid;
             document.getElementById("buyerEmail").textContent = user.email;
             loadAvailableBooks();
+            loadWishlist(); // Make sure wishlist loads on login
         } else {
             window.location.href = "login.html";
         }
@@ -84,9 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
     // ================= SEARCH & FILTER =================
     function filterBooks() {
-        console.log("🔍 Filtering logic triggered!"); // If this doesn't show, the event listener failed
         const searchTerm = searchInput.value.toLowerCase();
         const selectedCategory = categoryFilter.value.toLowerCase();
 
@@ -105,6 +107,84 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Attach listeners
-    searchInput.addEventListener("input", filterBooks);
-    categoryFilter.addEventListener("change", filterBooks);
+    if (searchInput) searchInput.addEventListener("input", filterBooks);
+    if (categoryFilter) categoryFilter.addEventListener("change", filterBooks);
+
+    // ================= ADD TO WISHLIST =================
+    function addToWishlist(bookId, bookData) {
+        if (!currentUserUID) return;
+
+        db.collection("users").doc(currentUserUID).collection("wishlist").doc(bookId).set({
+            bookName: bookData.bookName,
+            author: bookData.author,
+            price: bookData.price,
+            category: bookData.category,
+            image: bookData.image || "", // IMPORTANT: Saves the image URL to the wishlist
+            addedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert(`"${bookData.bookName}" added to your Wishlist!`);
+        });
+    }
+
+    // ================= LOAD WISHLIST =================
+    function loadWishlist() {
+        if (!currentUserUID) return;
+        
+        db.collection("users").doc(currentUserUID).collection("wishlist")
+        .onSnapshot((querySnapshot) => {
+            wishlistGrid.innerHTML = "";
+            
+            if (querySnapshot.empty) {
+                wishlistGrid.innerHTML = "<p>Your wishlist is empty.</p>";
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const book = doc.data();
+                const bookId = doc.id;
+                
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.innerHTML = `
+                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
+                    <h3>${book.bookName}</h3>
+                    <div class="book-details">
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Category:</strong> ${book.category}</p>
+                    </div>
+                    <div class="book-price">₹${book.price}</div>
+                    <button class="btn-remove" data-id="${bookId}">Remove ❌</button>
+                `;
+                wishlistGrid.appendChild(card);
+            });
+
+            document.querySelectorAll('.btn-remove').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    removeFromWishlist(id);
+                });
+            });
+        });
+    }
+
+    // ================= REMOVE FROM WISHLIST =================
+    function removeFromWishlist(bookId) {
+        db.collection("users").doc(currentUserUID).collection("wishlist").doc(bookId).delete()
+        .then(() => {
+            console.log("Book removed from wishlist");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+    }
+
+    // ================= LOGOUT =================
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+        if (confirm('Are you sure you want to logout?')) {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error("Logout error:", error);
+            });
+        }
+    });
 });
