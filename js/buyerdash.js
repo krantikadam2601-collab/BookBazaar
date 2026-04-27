@@ -48,29 +48,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderBooks(booksToDisplay) {
         availableBooksGrid.innerHTML = ""; 
+
         if (booksToDisplay.length === 0) {
-            availableBooksGrid.innerHTML = "<p>No books found.</p>";
+            availableBooksGrid.innerHTML = "<p>No books found matching your search.</p>";
             return;
         }
 
         booksToDisplay.forEach((book) => {
             const card = document.createElement('div');
             card.className = 'book-card';
+            
+            // All details including Language, Location, and Contact are restored here
             card.innerHTML = `
+                <img src="${book.image || 'BBlogo.jpeg'}" alt="Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
                 <h3>${book.bookName || "Untitled"}</h3>
-                <img src="${book.image || 'BBlogo.jpeg'}" alt="Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px;">
                 <div class="book-details">
                     <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
                     <p><strong>Category:</strong> ${book.category || "General"}</p>
-                    <p><strong>Location:</strong> ${book.location || "Pune"}</p>
+                    <p><strong>Language:</strong> ${book.language || "Not specified"}</p>
+                    <p><strong>Location:</strong> ${book.location || "Not specified"}</p>
+                    <p><strong>Contact:</strong> ${book.contact || "N/A"}</p>
                 </div>
-                <div class="book-price">₹${book.price}</div>
+                <div class="book-price">₹${book.price || "0"}</div>
                 <button class="btn-save btn-wishlist" data-id="${book.id}">Add to Wishlist ❤️</button>
             `;
             availableBooksGrid.appendChild(card);
         });
-    }
 
+        // Add listeners to Wishlist buttons
+        document.querySelectorAll('.btn-wishlist').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id');
+                const bookData = allBooks.find(b => b.id === id);
+                addToWishlist(id, bookData);
+            });
+        });
+    }
     // ================= SEARCH & FILTER =================
     function filterBooks() {
         console.log("🔍 Filtering logic triggered!"); // If this doesn't show, the event listener failed
