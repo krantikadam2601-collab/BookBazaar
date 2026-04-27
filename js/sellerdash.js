@@ -42,17 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
             // 1. Create a reference to Firebase Storage
             const storageRef = firebase.storage().ref('book_covers/' + Date.now() + '_' + file.name);
 
-            // Change button text so user knows it's working
             const submitBtn = form.querySelector('.btn-save');
             submitBtn.textContent = "Uploading...";
             submitBtn.disabled = true;
 
             // 2. Upload the file
             storageRef.put(file).then((snapshot) => {
-                // 3. Get the downloaded URL
                 return snapshot.ref.getDownloadURL();
             }).then((downloadURL) => {
-                // 4. Save everything to Firestore (now including the real image URL!)
+                // 3. Save to Firestore (Typo fixed here!)
                 return db.collection("books").add({
                     seller: data.seller,
                     location: data.location,
@@ -64,9 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     price: Number(data.price),
                     pageNo: Number(data.pageNo),
                     otherInfo: data.otherInfo || "",
-                    image: downloadURL // The actual URL is saved here!
+                    image: downloadURL // Link from Storage
                 });
-            }).then((docRef) => {
+            }).then(() => {
                 alert("Book listing and image added successfully!");
                 form.reset();
                 if (fileNameDisplay && fileLabel) {
@@ -75,22 +73,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }).catch((error) => {
                 console.error("Error:", error);
-                alert("Error saving data: " + error.message);
+                alert("Error: " + error.message);
             }).finally(() => {
                 submitBtn.textContent = "Save Listing";
                 submitBtn.disabled = false;
             });
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("Error saving data: " + error.message);
-            });
-        });
+        }); // Correctly closes the event listener
     }
 
     // ================= CLEAR BUTTON =================
     const clearBtn = document.querySelector('.btn-clear');
-
     if (clearBtn) {
         clearBtn.addEventListener('click', function () {
             if (fileNameDisplay && fileLabel) {
@@ -102,20 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ================= LOGOUT =================
     const logoutBtn = document.querySelector('.logout-btn');
-
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function () {
             if (confirm('Are you sure you want to logout?')) {
-
-                firebase.auth().signOut()
-                .then(() => {
+                firebase.auth().signOut().then(() => {
                     window.location.href = 'login.html';
-                })
-                .catch((error) => {
-                    console.error("Logout error:", error);
                 });
             }
         });
     }
-
 });
