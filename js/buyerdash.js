@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p><strong>Category:</strong> ${book.category}</p>
                         <p><strong>Language:</strong> ${book.language}</p>
                         <p><strong>Location:</strong> ${book.location}</p>
+                        <p><strong>Contact:</strong> ${book.contact}</p>
                     </div>
                     <div class="book-price">₹${book.price}</div>
                     <button class="btn-save btn-wishlist" data-id="${bookId}">Add to Wishlist ❤️</button>
