@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.className = 'book-card';
                 card.innerHTML = `
                     <h3>${book.bookName}</h3>
+                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
                     <div class="book-details">
                         <p><strong>Author:</strong> ${book.author}</p>
                         <p><strong>Category:</strong> ${book.category}</p>
@@ -122,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.className = 'book-card';
                 card.innerHTML = `
                     <h3>${book.bookName}</h3>
+                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
                     <div class="book-details">
                         <p><strong>Author:</strong> ${book.author}</p>
                         <p><strong>Category:</strong> ${book.category}</p>
