@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - BookBazaar</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="brand">
+        <img src="BBlogo.jpeg" class="logo" alt="BookBazaar Logo">
+        <h1 id="logoname">BookBazaar</h1>
+        <p class="tagline">Buy, Sell and Exchange Books Easily</p>
+    </div>
+    
+    <div class="container">
+        <div class="dashboard-card">
+            <div class="user-info">
+                <div class="user-info-content">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Logged in as</span>
+                        <span class="user-info-value" id="buyerEmail">Loading...</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+
+            <div class="button-group" style="margin-bottom: 30px;">
+                <button id="btnBrowse" class="btn-save">Browse Books</button>
+                <button id="btnWishlist" class="btn-clear">My Wishlist ❤️</button>
+            </div>
+
+            <div id="shopSection">
+                <h2 class="dashboard-title">Available Books</h2>
+                <div id="availableBooksGrid" class="books-grid">
+                    </div>
+            </div>
+
+            <div id="wishlistSection" style="display: none;">
+                <h2 class="dashboard-title">My Wishlist</h2>
+                <div id="wishlistGrid" class="books-grid">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebaseConfig.js"></script>
+    <script src="js/buyerdash.js"></script>
+</body>
+</html>
