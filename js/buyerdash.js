@@ -101,42 +101,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ================= FULL PAGE MODAL LOGIC =================
-    function openProductPage(book) {
-        modalContent.innerHTML = `
-            <div class="product-layout">
-                <div class="product-image-container">
-                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover">
-                </div>
-                <div class="product-details-container">
+   function openProductPage(book) {
+    const modal = document.getElementById("productViewModal");
+    const content = document.getElementById("modalContentBody");
+
+    // We use fallback values ("Unknown Seller", etc.) in case the data is missing
+    content.innerHTML = `
+        <div class="product-layout">
+            <div class="product-image-container">
+                <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover">
+            </div>
+            <div class="product-details-container">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="color: #ff8c00; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${book.category}</span>
-                    <h1 style="font-size: 48px; margin: 10px 0;">${book.bookName}</h1>
-                    <p style="font-size: 22px; color: #555;">by <strong>${book.author}</strong></p>
+                    <span style="background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">Verified Student Seller</span>
+                </div>
+                
+                <h1 style="font-size: 48px; margin: 10px 0 5px 0;">${book.bookName}</h1>
+                <p style="font-size: 22px; color: #555; margin-bottom: 20px;">by <strong>${book.author}</strong></p>
+                
+                <div class="modal-price">₹${book.price}</div>
+                
+                <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Book Description</h3>
+                    <p style="line-height: 1.6; color: #666; font-size: 16px;">
+                        <strong>Language:</strong> ${book.language || 'English'}<br>
+                        <strong>Pages:</strong> ${book.pageNo || 'N/A'}<br>
+                        <strong>Condition:</strong> Pre-owned<br><br>
+                        ${book.otherInfo || "This book is part of a student-to-student exchange. It has been kept in good condition and is ready for its next owner."}
+                    </p>
+                </div>
+
+                <div class="seller-badge">
+                    <h3 style="margin: 0 0 15px 0; color: #4b2e1e; border-bottom: 1px solid #ffce99; padding-bottom: 8px;">Seller Details</h3>
                     
-                    <div class="modal-price">₹${book.price}</div>
-                    
-                    <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <h3 style="color: #333;">Description & Specs</h3>
-                        <p style="line-height: 1.8; color: #666; font-size: 16px;">
-                            <strong>Language:</strong> ${book.language || 'English'}<br>
-                            <strong>Contact Seller:</strong> ${book.contact || 'N/A'}<br><br>
-                            ${book.otherInfo || "This book is available for immediate purchase or exchange. Please contact the seller for further details regarding the condition."}
-                        </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <p style="margin: 0; font-size: 12px; color: #8b5e3c; text-transform: uppercase;">Sold by</p>
+                            <p style="margin: 2px 0; font-size: 18px; font-weight: bold; color: #333;">${book.sellerName || "Anonymous Seller"}</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-size: 12px; color: #8b5e3c; text-transform: uppercase;">Pickup Point</p>
+                            <p style="margin: 2px 0; font-size: 18px; font-weight: bold; color: #333;">${book.location || 'Pune'}</p>
+                        </div>
                     </div>
 
-                    <div class="seller-badge">
-                        <h4 style="margin: 0; font-size: 20px;">Pickup Information</h4>
-                        <p style="margin: 10px 0 0 0;">📍 Location: <strong>${book.location || 'Pune, Maharashtra'}</strong></p>
-                        <a href="https://wa.me/${(book.contact || '').replace(/\s+/g, '')}" target="_blank" class="whatsapp-btn">
-                            Chat on WhatsApp 💬
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="margin: 0; font-size: 16px; color: #444;">
+                            <strong>Phone:</strong> ${book.contact}
+                        </p>
+                        <a href="https://wa.me/${(book.contact || '').replace(/\s+/g, '')}?text=Hi%20${book.sellerName},%20I'm%20interested%20in%20your%20book%20${book.bookName}" 
+                           target="_blank" class="whatsapp-btn" style="text-align: center;">
+                            Chat with ${book.sellerName || 'Seller'} on WhatsApp 💬
                         </a>
                     </div>
                 </div>
             </div>
-        `;
+        </div>
+    `;
 
-        productModal.style.display = "block";
-        document.body.style.overflow = "hidden"; // Freeze background scroll
-    }
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+}
 
     // Modal Closing Logic
     if (closeProductModal) {
