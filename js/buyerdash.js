@@ -5,10 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentUserUID = null;
     let allBooks = []; 
 
+    // UI Elements
     const availableBooksGrid = document.getElementById("availableBooksGrid");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
     const wishlistGrid = document.getElementById("wishlistGrid");
+    
+    // Modal Elements
+    const productModal = document.getElementById("productViewModal");
+    const modalContent = document.getElementById("modalContentBody");
+    const closeProductModal = document.getElementById("closeProductModal");
 
     // ================= AUTH CHECK =================
     auth.onAuthStateChanged(user => {
@@ -16,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currentUserUID = user.uid;
             document.getElementById("buyerEmail").textContent = user.email;
             loadAvailableBooks();
-            loadWishlist(); // Make sure wishlist loads on login
+            loadWishlist(); 
         } else {
             window.location.href = "login.html";
         }
@@ -59,33 +65,93 @@ document.addEventListener("DOMContentLoaded", () => {
         booksToDisplay.forEach((book) => {
             const card = document.createElement('div');
             card.className = 'book-card';
+            card.style.cursor = 'pointer'; // Visual cue for commercial sites
             
-            // All details including Language, Location, and Contact are restored here
             card.innerHTML = `
                 <img src="${book.image || 'BBlogo.jpeg'}" alt="Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
                 <h3>${book.bookName || "Untitled"}</h3>
                 <div class="book-details">
                     <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
                     <p><strong>Category:</strong> ${book.category || "General"}</p>
-                    <p><strong>Language:</strong> ${book.language || "Not specified"}</p>
                     <p><strong>Location:</strong> ${book.location || "Not specified"}</p>
-                    <p><strong>Contact:</strong> ${book.contact || "N/A"}</p>
                 </div>
                 <div class="book-price">₹${book.price || "0"}</div>
                 <button class="btn-save btn-wishlist" data-id="${book.id}">Add to Wishlist ❤️</button>
             `;
+            
+            // Trigger Modal on Card Click
+            card.addEventListener('click', (e) => {
+                // Don't open modal if they specifically clicked the wishlist button
+                if (e.target.classList.contains('btn-wishlist')) return;
+                openProductPage(book);
+            });
+
             availableBooksGrid.appendChild(card);
         });
 
-        // Add listeners to Wishlist buttons
+        // Add listeners to Wishlist buttons specifically
         document.querySelectorAll('.btn-wishlist').forEach(button => {
             button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevents card click event from firing
                 const id = e.target.getAttribute('data-id');
                 const bookData = allBooks.find(b => b.id === id);
                 addToWishlist(id, bookData);
             });
         });
     }
+
+    // ================= FULL PAGE MODAL LOGIC =================
+    function openProductPage(book) {
+        modalContent.innerHTML = `
+            <div class="product-layout">
+                <div class="product-image-container">
+                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover">
+                </div>
+                <div class="product-details-container">
+                    <span style="color: #ff8c00; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${book.category}</span>
+                    <h1 style="font-size: 48px; margin: 10px 0;">${book.bookName}</h1>
+                    <p style="font-size: 22px; color: #555;">by <strong>${book.author}</strong></p>
+                    
+                    <div class="modal-price">₹${book.price}</div>
+                    
+                    <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <h3 style="color: #333;">Description & Specs</h3>
+                        <p style="line-height: 1.8; color: #666; font-size: 16px;">
+                            <strong>Language:</strong> ${book.language || 'English'}<br>
+                            <strong>Contact Seller:</strong> ${book.contact || 'N/A'}<br><br>
+                            ${book.otherInfo || "This book is available for immediate purchase or exchange. Please contact the seller for further details regarding the condition."}
+                        </p>
+                    </div>
+
+                    <div class="seller-badge">
+                        <h4 style="margin: 0; font-size: 20px;">Pickup Information</h4>
+                        <p style="margin: 10px 0 0 0;">📍 Location: <strong>${book.location || 'Pune, Maharashtra'}</strong></p>
+                        <a href="https://wa.me/${(book.contact || '').replace(/\s+/g, '')}" target="_blank" class="whatsapp-btn">
+                            Chat on WhatsApp 💬
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        productModal.style.display = "block";
+        document.body.style.overflow = "hidden"; // Freeze background scroll
+    }
+
+    // Modal Closing Logic
+    if (closeProductModal) {
+        closeProductModal.onclick = () => {
+            productModal.style.display = "none";
+            document.body.style.overflow = "auto";
+        };
+    }
+
+    window.onclick = (event) => {
+        if (event.target == productModal) {
+            productModal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    };
 
     // ================= SEARCH & FILTER =================
     function filterBooks() {
@@ -106,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderBooks(filtered);
     }
 
-    // Attach listeners
     if (searchInput) searchInput.addEventListener("input", filterBooks);
     if (categoryFilter) categoryFilter.addEventListener("change", filterBooks);
 
@@ -119,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
             author: bookData.author,
             price: bookData.price,
             category: bookData.category,
-            image: bookData.image || "", // IMPORTANT: Saves the image URL to the wishlist
+            image: bookData.image || "", 
             addedAt: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
             alert(`"${bookData.bookName}" added to your Wishlist!`);
