@@ -1,0 +1,62 @@
+/* ================= BUYER DASHBOARD SPECIFIC ================= */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.book-card {
+    background: #fafafa;
+    border: 2px solid #ffe0cc;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 140, 0, 0.15);
+    border-color: #ff8c00;
+}
+
+.book-card h3 {
+    margin: 0 0 10px 0;
+    color: #4b2e1e;
+    font-size: 18px;
+}
+
+.book-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.book-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff8c00;
+    margin: 15px 0;
+}
+
+.btn-wishlist, .btn-remove {
+    margin-top: auto;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-remove {
+    background: #ff4757;
+    color: white;
+}
+
+.btn-remove:hover {
+    background: #ff6b81;
+}
