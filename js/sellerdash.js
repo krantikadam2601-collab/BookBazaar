@@ -31,31 +31,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+            const fileInput = document.getElementById('picture');
+            const file = fileInput.files[0];
 
-            // 🔥 Save to Firestore
-            db.collection("books").add({
-                seller: data.seller,
-                location: data.location,
-                contact: data.contact,
-                bookName: data.bookName,
-                author: data.author,
-                category: data.category,
-                language: data.language,
-                price: Number(data.price),
-                pageNo: Number(data.pageNo),
-                otherInfo: data.otherInfo || "",
-                image: "" // (image upload not implemented yet)
-            })
-            .then((docRef) => {
-                console.log("Saved ID:", docRef.id);
-                alert("Book listing added successfully!");
+            if (!file) {
+                alert("Please select a book cover image.");
+                return;
+            }
 
-                // Reset form
+            // 1. Create a reference to Firebase Storage
+            const storageRef = firebase.storage().ref('book_covers/' + Date.now() + '_' + file.name);
+
+            // Change button text so user knows it's working
+            const submitBtn = form.querySelector('.btn-save');
+            submitBtn.textContent = "Uploading...";
+            submitBtn.disabled = true;
+
+            // 2. Upload the file
+            storageRef.put(file).then((snapshot) => {
+                // 3. Get the downloaded URL
+                return snapshot.ref.getDownloadURL();
+            }).then((downloadURL) => {
+                // 4. Save everything to Firestore (now including the real image URL!)
+                return db.collection("books").add({
+                    seller: data.seller,
+                    location: data.location,
+                    contact: data.contact,
+                    bookName: data.bookName,
+                    author: data.author,
+                    category: data.category,
+                    language: data.language,
+                    price: Number(data.price),
+                    pageNo: Number(data.pageNo),
+                    otherInfo: data.otherInfo || "",
+                    image: downloadURL // The actual URL is saved here!
+                });
+            }).then((docRef) => {
+                alert("Book listing and image added successfully!");
                 form.reset();
-
-                // Reset UI
-                fileNameDisplay.textContent = "No file selected";
-                fileLabel.textContent = "Choose File";
+                if (fileNameDisplay && fileLabel) {
+                    fileNameDisplay.textContent = "No file selected";
+                    fileLabel.textContent = "Choose File";
+                }
+            }).catch((error) => {
+                console.error("Error:", error);
+                alert("Error saving data: " + error.message);
+            }).finally(() => {
+                submitBtn.textContent = "Save Listing";
+                submitBtn.disabled = false;
+            });
             })
             .catch((error) => {
                 console.error("Error:", error);
