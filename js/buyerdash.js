@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Note: 'db' is already declared in firebaseConfig.js
     const auth = firebase.auth();
     let currentUserUID = null;
+    let allBooks = []; // This array acts as our local database for filtering
 
     // UI Elements
     const buyerEmailDisplay = document.getElementById("buyerEmail");
@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const wishlistSection = document.getElementById("wishlistSection");
     const availableBooksGrid = document.getElementById("availableBooksGrid");
     const wishlistGrid = document.getElementById("wishlistGrid");
+    
+    // Search & Filter Elements
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
 
     // ================= AUTHENTICATION CHECK =================
     auth.onAuthStateChanged(user => {
@@ -33,12 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
         wishlistSection.style.display = "block";
     });
 
-    // ================= LOAD BOOKS =================
+    // ================= LOAD & RENDER LOGIC =================
     function loadAvailableBooks() {
         availableBooksGrid.innerHTML = "<p>Loading books...</p>";
 
         db.collection("books").get().then((querySnapshot) => {
-            availableBooksGrid.innerHTML = ""; 
+            allBooks = []; // Clear the local list before repopulating
             
             if (querySnapshot.empty) {
                 availableBooksGrid.innerHTML = "<p>No books available right now.</p>";
@@ -47,120 +51,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
             querySnapshot.forEach((doc) => {
                 const book = doc.data();
-                const bookId = doc.id;
-                
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.innerHTML = `
-                    <h3>${book.bookName}</h3>
-                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
-                    <div class="book-details">
-                        <p><strong>Author:</strong> ${book.author}</p>
-                        <p><strong>Category:</strong> ${book.category}</p>
-                        <p><strong>Language:</strong> ${book.language}</p>
-                        <p><strong>Location:</strong> ${book.location}</p>
-                        <p><strong>Contact:</strong> ${book.contact}</p>
-                    </div>
-                    <div class="book-price">₹${book.price}</div>
-                    <button class="btn-save btn-wishlist" data-id="${bookId}">Add to Wishlist ❤️</button>
-                `;
-                availableBooksGrid.appendChild(card);
+                book.id = doc.id; // Store the ID for wishlist logic
+                allBooks.push(book);
             });
 
-            // Attach event listeners to all newly created "Add to Wishlist" buttons
-            document.querySelectorAll('.btn-wishlist').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const id = e.target.getAttribute('data-id');
-                    // Find the book data from the snapshot
-                    const bookData = querySnapshot.docs.find(d => d.id === id).data();
-                    addToWishlist(id, bookData);
-                });
-            });
+            // Initial render showing all books
+            renderBooks(allBooks);
 
         }).catch(error => {
             console.error("Error loading books:", error);
-            availableBooksGrid.innerHTML = "<p>Error loading books. Check console.</p>";
+            availableBooksGrid.innerHTML = "<p>Error loading books.</p>";
         });
     }
 
-    // ================= ADD TO WISHLIST =================
-    function addToWishlist(bookId, bookData) {
-        if (!currentUserUID) return;
-
-        db.collection("users").doc(currentUserUID).collection("wishlist").doc(bookId).set({
-            bookName: bookData.bookName,
-            author: bookData.author,
-            price: bookData.price,
-            category: bookData.category,
-            image: bookData.image || "", 
-            addedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            alert(`"${bookData.bookName}" added to your Wishlist!`);
-        });
-    }
-
-    // ================= LOAD WISHLIST =================
-    function loadWishlist() {
-        if (!currentUserUID) return;
+    function renderBooks(booksToDisplay) {
+        availableBooksGrid.innerHTML = ""; 
         
-        // Listen for real-time updates so the UI changes instantly when items are added/removed
-        db.collection("users").doc(currentUserUID).collection("wishlist")
-        .onSnapshot((querySnapshot) => {
-            wishlistGrid.innerHTML = "";
-            
-            if (querySnapshot.empty) {
-                wishlistGrid.innerHTML = "<p>Your wishlist is empty.</p>";
-                return;
-            }
-
-            querySnapshot.forEach((doc) => {
-                const book = doc.data();
-                const bookId = doc.id;
-                
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.innerHTML = `
-                    <h3>${book.bookName}</h3>
-                    <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
-                    <div class="book-details">
-                        <p><strong>Author:</strong> ${book.author}</p>
-                        <p><strong>Category:</strong> ${book.category}</p>
-                    </div>
-                    <div class="book-price">₹${book.price}</div>
-                    <button class="btn-remove" data-id="${bookId}">Remove ❌</button>
-                `;
-                wishlistGrid.appendChild(card);
-            });
-
-            // Attach event listeners to all newly created "Remove" buttons
-            document.querySelectorAll('.btn-remove').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const id = e.target.getAttribute('data-id');
-                    removeFromWishlist(id);
-                });
-            });
-        });
-    }
-
-    // ================= REMOVE FROM WISHLIST =================
-    function removeFromWishlist(bookId) {
-        db.collection("users").doc(currentUserUID).collection("wishlist").doc(bookId).delete()
-        .then(() => {
-            console.log("Book removed from wishlist");
-            // No need to refresh the grid, onSnapshot handles it!
-        }).catch((error) => {
-            console.error("Error removing document: ", error);
-        });
-    }
-
-    // ================= LOGOUT =================
-    document.getElementById('logoutBtn').addEventListener('click', function () {
-        if (confirm('Are you sure you want to logout?')) {
-            auth.signOut().then(() => {
-                window.location.href = 'login.html';
-            }).catch((error) => {
-                console.error("Logout error:", error);
-            });
+        if (booksToDisplay.length === 0) {
+            availableBooksGrid.innerHTML = "<p>No books found matching your criteria.</p>";
+            return;
         }
-    });
+
+        booksToDisplay.forEach((book) => {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.innerHTML = `
+                <h3>${book.bookName}</h3>
+                <img src="${book.image || 'BBlogo.jpeg'}" alt="Book Cover" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffe0cc;">
+                <div class="book-details">
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Category:</strong> ${book.category}</p>
+                    <p><strong>Language:</strong> ${book.language}</p>
+                    <p><strong>Location:</strong> ${book.location}</p>
+                    <p><strong>Contact:</strong> ${book.contact}</p>
+                </div>
+                <div class="book-price">₹${book.price}</div>
+                <button class="btn-save btn-wishlist" data-id="${book.id}">Add to Wishlist ❤️</button>
+            `;
+            availableBooksGrid.appendChild(card);
+        });
+
+        // Re-attach listeners to the new buttons
+        document.querySelectorAll('.btn-wishlist').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id');
+                const bookData = allBooks.find(b => b.id === id);
+                addToWishlist(id, bookData);
+            });
+        });
+    }
+
+    // ================= FILTERING SYSTEM =================
+    function filterBooks() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+
+        const filtered = allBooks.filter(book => {
+            // Check if title or author matches search term
+            const matchesSearch = 
+                book.bookName.toLowerCase().includes(searchTerm) || 
+                book.author.toLowerCase().includes(searchTerm);
+            
+            // Check if category matches selection
+            const matchesCategory = (selectedCategory === "all") || (book.category === selectedCategory);
+            
+            return matchesSearch && matchesCategory;
+        });
+
+        renderBooks(filtered);
+    }
+
+    // Attach real-time event listeners
+    searchInput.addEventListener("input", filterBooks);
+    categoryFilter.addEventListener("change", filterBooks);
+
+    // ================= WISHLIST & LOGOUT =================
+    // ... (Keep your existing addToWishlist, loadWishlist, and logout functions here)
 });
